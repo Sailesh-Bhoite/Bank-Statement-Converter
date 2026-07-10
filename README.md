@@ -1,7 +1,3 @@
-Here is a clean, comprehensive `README.md` file tailored specifically for your project. It includes setup instructions, the exact pipeline features you built, and clear documentation on how you resolved the PDF extraction hurdles.
-
----
-
 # 🏦 HDFC Bank Statement Data Pipeline & Analyzer
 
 An interactive, production-ready **Streamlit** dashboard designed to extract, sanitize, and reconstruct transaction records from unstructured HDFC Bank statement PDFs.
