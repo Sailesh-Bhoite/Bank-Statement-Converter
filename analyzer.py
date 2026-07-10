@@ -114,24 +114,6 @@ def clean_upi_with_split(clean_narrations):
     return parsed_narrations
 
 
-# --- UPDATED TEXT COLOR STYLING FUNCTION ---
-def highlight_cols(df):
-    styles = pd.DataFrame('', index=df.index, columns=df.columns)
-    
-    # Text color red for active withdrawals
-    styles["Withdrawal (Dr)"] = df["Withdrawal (Dr)"].apply(
-        lambda v: "color: #cc0000; font-weight: bold;" if v != "-" else ""
-    )
-    # Text color green for active deposits
-    styles["Deposit (Cr)"] = df["Deposit (Cr)"].apply(
-        lambda v: "color: #008800; font-weight: bold;" if v != "-" else ""
-    )
-    # Text color light blue for running balances
-    styles["Running Balance"] = "color: #3399ff; font-weight: bold;"
-    
-    return styles
-
-
 # --- STREAMLIT USER INTERFACE FILE UPLOADER ---
 uploaded_file = st.file_uploader("Choose an HDFC Bank Statement PDF", type=["pdf"])
 
@@ -172,12 +154,17 @@ if uploaded_file is not None:
 
     min_length = min(len(all_dates), len(parsed_narrations), len(all_balances))
     
+    # Formatter logic to restrict floating point numbers strictly to 2 decimals
+    formatted_withdrawals = [f"{w:.2f}" if w > 0 else "-" for w in withdrawal_sequence[:min_length]]
+    formatted_deposits = [f"{d:.2f}" if d > 0 else "-" for d in deposit_sequence[:min_length]]
+    formatted_balances = [f"{b:.2f}" for b in all_balances[:min_length]]
+
     df_data = {
         "Date": all_dates[:min_length],
         "Narration / Description": parsed_narrations[:min_length],
-        "Withdrawal (Dr)": [f"{w:.2f}" if w > 0 else "-" for w in withdrawal_sequence[:min_length]],
-        "Deposit (Cr)": [f"{d:.2f}" if d > 0 else "-" for d in deposit_sequence[:min_length]],
-        "Running Balance": [f"{b:.2f}" for b in all_balances[:min_length]]
+        "Withdrawal (Dr)": formatted_withdrawals,
+        "Deposit (Cr)": formatted_deposits,
+        "Running Balance": formatted_balances
     }
     
     df = pd.DataFrame(df_data)
@@ -196,8 +183,19 @@ if uploaded_file is not None:
 
     st.markdown("---")
     st.subheader("📋 Parsed Transaction Ledger Table")
+    st.info("💡 Double-click any text cell below to edit names or add spaces on the fly!")
     
-    # Apply the styling wrapper to the dataframe view
-    styled_df = df.style.apply(highlight_cols, axis=None)
+    # Render interactive editor UI component framework
+    edited_df = st.data_editor(df, use_container_width=True, key="ledger_editor")
     
-    st.dataframe(styled_df, use_container_width=True)
+    # Generate live compilation output for storage extraction 
+    st.markdown(" ")
+    csv_data = edited_df.to_csv(index=True).encode('utf-8')
+    
+    st.download_button(
+        label="📥 Download Edited Ledger as CSV",
+        data=csv_data,
+        file_name="Sanitized_HDFC_Statement.csv",
+        mime="text/csv",
+        use_container_width=True
+    )
