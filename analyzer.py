@@ -183,19 +183,19 @@ if uploaded_file is not None:
 
     st.markdown("---")
     st.subheader("📋 Parsed Transaction Ledger Table")
-    st.info("💡 Double-click any text cell below to edit names or add spaces on the fly!")
+    # st.info("💡 Double-click any text cell below to edit names or add spaces on the fly!")
     
     # Render interactive editor UI component framework
     edited_df = st.data_editor(df, use_container_width=True, key="ledger_editor")
     
     # Generate live compilation output for storage extraction 
-    st.markdown(" ")
-    csv_data = edited_df.to_csv(index=True).encode('utf-8')
+    # st.markdown(" ")
+    # csv_data = edited_df.to_csv(index=True).encode('utf-8')
     
-    st.download_button(
-        label="📥 Download Edited Ledger as CSV",
-        data=csv_data,
-        file_name="Sanitized_HDFC_Statement.csv",
-        mime="text/csv",
-        use_container_width=True
-    )
+    # st.download_button(
+    #     label="📥 Download Edited Ledger as CSV",
+    #     data=csv_data,
+    #     file_name="Sanitized_HDFC_Statement.csv",
+    #     mime="text/csv",
+    #     use_container_width=True
+    # )
