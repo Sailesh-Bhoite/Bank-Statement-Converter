@@ -72,5 +72,3 @@ The data processor handles bank statements through four specific layers:
 * **Interactive Table:** Filter, search, and track rows using a ledger view starting cleanly at index `1`.
 
 ---
-
-Congratulations on locking down this backend project and taking it to production! 🚀
